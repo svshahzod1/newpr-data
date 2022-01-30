@@ -19,12 +19,27 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+/**
+ * Admistrator va director boshqara oladigan routlar
+ */
+Route::middleware('user-role')->prefix('admin')->name('admin.')->group(function (){
 
-Auth::routes();
+    Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+});
 
-Auth::routes();
+/**
+ * Director adminkasi routlari
+ */
+Route::middleware('user-role:director')->prefix('director')->name('director.')->group(function (){
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/',function (){echo auth()->user()->name;})->name('home');
+Route::get('/',function (){echo auth()->user()->name;})->name('users');
+
+});
+
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])
+    ->middleware('user-role','auth')
+    ->name('home');
+
